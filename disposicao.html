@@ -25,27 +25,68 @@
 
     <script>
 
+        window.onload = function () {
+            const tarefas = JSON.parse(localStorage.getItem('tarefas') || '[]');
+            tarefas.forEach(tarefa => {
+                let container = document.querySelector('.container');
+                let btn = document.querySelector('#btnadd');
+                let modal = document.createElement('div');
+                modal.classList.add('d-flex', 'flex-column', 'align-items-end', 'rounded-2', 'shadow-sm', 'p-3', 'my-3', 'gap-2');
+                modal.style.backgroundColor = 'blueviolet';
+                modal.innerHTML = `
+                    <input type="text" class="form-control" value="${tarefa.titulo}" readonly>
+                    <input type="date" class="form-control w-75" value="${tarefa.data}" readonly>
+                    <select class="form-control" disabled>
+                        <option value="a fazer">A fazer</option>
+                        <option value="fazendo">Fazendo</option>
+                        <option value="feito">Feito</option>
+                    </select>
+                    <div class="d-flex justify-content-center gap-2">
+                        <button class="btn btn-danger" onclick="removeTarefa(this)">Cancelar</button>
+                        <button class="btn btn-success" onclick="finalizarTarefa(this)">Finalizar</button>
+                    </div>
+                `;
+                // container.insertBefore(modal, btn);
+                container.appendChild(modal);
+            });
+        }
+
+        function removeTarefa(btn) {
+            const modal = btn.closest('div').parentElement;
+            const tarefas = JSON.parse(localStorage.getItem('tarefas') || '[]');
+            const titulo = modal.querySelector('input[type="text"]').value;
+            const index = tarefas.findIndex(t => t.titulo === titulo);
+            tarefas.splice(index, 1);
+            localStorage.setItem('tarefas', JSON.stringify(tarefas));
+            modal.remove();
+        }
+
+        function finalizarTarefa(btn) {
+            const modal = btn.closest('div').parentElement;
+            const select = modal.querySelector('select');
+            select.value = 'feito';
+        }
+
         function addTarefa() {
             let container = document.querySelector('.container');
             let btn = document.querySelector('#btnadd');
             let modal = document.createElement('div');
-            modal.classList.add('d-flex', 'flex-column', 'align-items-end', 'rounded-2', 'shadow-sm', 'p-3', 'mb-3', 'gap-2');
+            modal.classList.add('d-flex', 'flex-column', 'align-items-end', 'rounded-2', 'shadow-sm', 'p-3', 'my-3', 'gap-2');
             modal.style.backgroundColor = 'blueviolet';
-
             modal.innerHTML = `
-            <input type="text" class="form-control" placeholder="Insira o titulo da tarefa">
-            <input type="date" class="form-control w-50">
-             <select class="form-control">
-                    <option value="a fazer">A fazer</option>
-                    <option value="fazendo">Fazendo</option>
-                    <option value="feito">Feito</option>
-                </select>
-            <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-danger">Cancelar</button>
-                <button class="btn btn-success">Adicionar</button>
-            </div>
-            `;
-            container.insertBefore(modal, btn);
+    <input type="text" class="form-control" placeholder="Insira o titulo da tarefa">
+    <input type="date" class="form-control w-50">
+    <select class="form-control">
+        <option value="a fazer">A fazer</option>
+        <option value="fazendo">Fazendo</option>
+        <option value="feito">Feito</option>
+    </select>
+    <div class="d-flex justify-content-center gap-2">
+        <button class="btn btn-danger">Cancelar</button>
+        <button class="btn btn-success">Adicionar</button>
+    </div>
+    `;
+            container.appendChild(modal);
             modal.querySelector('.btn-danger').addEventListener('click', () => modal.remove());
             modal.querySelector('.btn-success').addEventListener('click', () => {
                 const titulo = modal.querySelector('input[type="text"]').value;

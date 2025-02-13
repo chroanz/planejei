@@ -97,6 +97,7 @@
                     tarefas.push(tarefa);
                     localStorage.setItem('tarefas', JSON.stringify(tarefas));
                     modal.remove();
+                    window.location.reload();
                 }
             });
         }
